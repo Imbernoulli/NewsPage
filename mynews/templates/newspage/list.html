@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <title>新闻列表</title>
+  <link href="/static/imgs">
+  <link rel="stylesheet" type="text/css" href="/static/bootstrap.min.css">
+  <style>
+    .news-image {
+      width: 320px;
+      object-fit: cover;
+      height: 180px;
+    }
+  </style>
+</head>
+<body>
+
+    <div class="container">
+    <header class="d-flex justify-content-center py-3">
+      <ul class="nav nav-pills">
+        <li class="nav-item"><a href="/" class="nav-link">首页</a></li>
+        <li class="nav-item"><a href="/search/" class="nav-link">搜索</a></li>
+        <li class="nav-item"><a href="/cat/" class="nav-link">分类</a></li>
+        <li class="nav-item"><a href="/" class="nav-link active disabled" aria-current="page">列表</a></li>
+      </ul>
+    </header>
+  </div>
+
+  <div class="container">
+      <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="check-circle-fill" viewBox="0 0 16 16">
+    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+  </symbol>
+  <symbol id="info-fill" viewBox="0 0 16 16">
+    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+  </symbol>
+  <symbol id="exclamation-triangle-fill" viewBox="0 0 16 16">
+    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+  </symbol>
+  </svg>
+
+  <div class="alert alert-success d-flex align-items-center" role="alert">
+  <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+  <div>
+   <h4 class="alert-heading">搜索成功！</h4>
+    <p>总耗时{{search_time}}。</p>
+  </div>
+  </div>
+
+    <h1>新闻列表</h1>
+    {% for news_item in list %}
+    <div class="d-flex position-relative">
+      <img src="{% static 'imgs/' %}{{ news_item.news_id }}_1.png" class="flex-shrink-0 me-3 news-image" alt="{{ news_item.news_title }}">
+      <div>
+        <h5 class="mt-0">{{ news_item.news_title }}
+          <span class="badge text-bg-secondary">作者：{{ news_item.author }}</span>
+          <span class="badge text-bg-primary">发布日期：{{ news_item.pub_date|date:"Y-m-d" }}</span>
+</span>
+        </h5>
+        <p>
+        <span class="badge text-bg-danger">文章热度：{{ news_item.news_popularity }}</span>
+        <span class="badge text-bg-danger">评论数：{{ news_item.comment_set.count }}</span>
+        {% if news_item.author.author_link != "" %}
+        <span class="badge text-bg-danger">作者微博：{{ news_item.author.author_link }}</span>
+          {% if news_item.author.author_fans != 0 %}
+          <span class="badge text-bg-danger">作者粉丝数：{{ news_item.author.author_fans }}</span>
+          {% endif %}
+        {% else %}
+        <span class="badge text-bg-danger">作者无微博</span>
+        {% endif %}
+        </p>
+        <p>关键词:{% for word in news_item.its_keywords.all %}
+          <span class="badge text-bg-primary">{{ word.word_name }}</span>
+          {% endfor %}
+        </p>
+        <p>{{ news_item.news_summary }}</p>
+        <a href="/search/{{news_item.news_id}}" class="stretched-link">了解更多</a>
+      </div>
+    </div>
+    <br>
+    {% endfor %}
+  </div>
+
+<div class="container">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item {% if not list.has_previous %}disabled{% endif %}">
+                <a class="page-link" href="?{{ query_string }}&page=1">首页</a>
+            </li>
+            {% if not list.has_previous %}
+            <li class="page-item disabled">
+                <a class="page-link">前一页</a>
+            </li>
+            {% else %}
+            <li class="page-item">
+                <a class="page-link" href="?{{ query_string }}&page={{ list.previous_page_number }}">前一页</a>
+            </li>
+            {% endif %}
+            {% for i in list.paginator.page_range %}
+            {% if forloop.counter|divisibleby:25 %}
+            </ul>
+            <ul class="pagination justify-content-center">
+            {% endif %}
+                {% if list.number == i %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ i }}</span>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{{ query_string }}&page={{ i }}">{{ i }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            {% if not list.has_next %}
+            <li class="page-item disabled">
+                <a class="page-link">下一页</a>
+            </li>
+            {% else %}
+            <li class="page-item">
+                <a class="page-link" href="?{{ query_string }}&page={{ list.next_page_number }}">下一页</a>
+            </li>
+            {% endif %}
+            <li class="page-item {% if not list.has_next %}disabled{% endif %}">
+                <a class="page-link" href="?{{ query_string }}&page={{ list.paginator.num_pages }}">末页</a>
+            </li>
+        </ul>
+    </nav>
+    <div style="display: flex; justify-content: center;">
+    <form id="jumpToPageForm" method="GET" class="mb-3">
+        <input type="hidden" name="other_query_param" value="{{ query_string }}">
+        <label for="pageInput" class="form-label">跳转到页码</label>
+        <div class="d-flex">
+            <input type="number" style="width: 300px;" class="form-control" id="pageInput" name="page" placeholder="输入页码">
+            <button type="submit" class="btn btn-primary ml-2">跳转</button>
+        </div>
+    </form>
+    </div>
+</div>
+    <div class="container">
+      <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <p class="col-md-4 mb-0 text-muted">Bohan's News</p>
+        <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+          <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+        </a>
+        <ul class="nav col-md-4 justify-content-end">
+          <li class="nav-item"><a href="/" class="nav-link px-2 text-muted">首页</a></li>
+          <li class="nav-item"><a href="/search/" class="nav-link px-2 text-muted">搜索</a></li>
+          <li class="nav-item"><a href="/cat/" class="nav-link px-2 text-muted">分类</a></li>
+          <li class="nav-item"><a href="/" class="nav-link px-2 text-muted disabled">列表</a></li>
+        </ul>
+      </footer>
+    </div>
+
+</body>
+</html>

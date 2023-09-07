@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <title>搜索页</title>
+  <link rel="stylesheet" type="text/css" href="/static/bootstrap.min.css">
+</head>
+
+
+<body>
+
+  <div class="container">
+    <header class="d-flex justify-content-center py-3">
+      <ul class="nav nav-pills">
+        <li class="nav-item"><a href="/" class="nav-link">首页</a></li>
+        <li class="nav-item"><a href="/search/" class="nav-link active"  aria-current="page">搜索</a></li>
+        <li class="nav-item"><a href="/cat/" class="nav-link">分类</a></li>
+        <li class="nav-item"><a href="/" class="nav-link disabled">列表</a></li>
+      </ul>
+    </header>
+  </div>
+
+  <div class="container mt-5">
+    <h1>搜索页</h1>
+    <form action="list" method="GET">
+      <select class="form-select form-select-lg mb-3" aria-label="Search Type" name="searchType">
+        <option value="分词搜索">分词搜索</option>
+        <option value="文本搜索" selected>文本搜索</option>
+        <option value="关键词搜索">关键词搜索</option>
+        <option value="日期搜索">日期搜索</option>
+      </select>
+
+      <input class="form-control form-control-lg mb-3" type="text" placeholder="输入搜索内容" aria-label="Query" name="query" maxlength="50">
+      
+      <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="sort">
+        <option value="time1" selected>时间倒序</option>
+        <option value="time2">时间顺序</option>
+        <option value="popularity">文章热度</option>
+        <option value="relativity">相关度</option>
+      </select>
+
+      <div class="row">
+        {% for keyword in list %}
+          <div class="col-md-2">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" id="{{ keyword }}" value="{{ keyword }}" name="keywords" >
+              <label class="form-check-label" for="{{ keyword }}">{{ keyword }}</label>
+            </div>
+          </div>
+          {% if forloop.counter|divisibleby:6 %}
+            </div><div class="row">
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <div class="d-flex justify-content-center mt-3">
+        <button type="submit" class="btn btn-primary">点击搜索</button>
+      </div>
+    </form>
+  </div>
+<div class="fixed-bottom">
+    <div class="container">
+      <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <p class="col-md-4 mb-0 text-muted">Bohan's News</p>
+        <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+          <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+        </a>
+        <ul class="nav col-md-4 justify-content-end">
+          <li class="nav-item"><a href="/" class="nav-link px-2 text-muted">首页</a></li>
+          <li class="nav-item"><a href="/search/" class="nav-link px-2 text-muted">搜索</a></li>
+          <li class="nav-item"><a href="/cat/" class="nav-link px-2 text-muted">分类</a></li>
+          <li class="nav-item"><a href="/" class="nav-link px-2 text-muted disabled">列表</a></li>
+        </ul>
+      </footer>
+    </div>
+</div>
+</body>
+</html>

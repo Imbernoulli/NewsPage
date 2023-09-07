@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <title>{{news.news_title}}</title>
+  <link href="/static/imgs">
+  <link rel="stylesheet" type="text/css" href="/static/bootstrap.min.css">
+  <script>
+    function goBack() {
+      window.history.back();
+    }
+</script>
+</head>
+<body>
+
+  <div class="container">
+      <header class="d-flex justify-content-center py-3">
+        <ul class="nav nav-pills">
+          <li class="nav-item"><a href="/" class="nav-link">首页</a></li>
+          <li class="nav-item"><a href="/search/" class="nav-link">搜索</a></li>
+          <li class="nav-item"><a href="/cat/" class="nav-link">分类</a></li>
+          <li class="nav-item"><a href="/" class="nav-link disabled">列表</a></li>
+        </ul>
+      </header>
+    </div>
+{% comment %} 下面这部分很多文件里面都有，是显示那个“徽章”需要的 {% endcomment %}
+  <div class="container mt-5">
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="check-circle-fill" viewBox="0 0 16 16">
+    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+  </symbol>
+  <symbol id="info-fill" viewBox="0 0 16 16">
+    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+  </symbol>
+  <symbol id="exclamation-triangle-fill" viewBox="0 0 16 16">
+    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+  </symbol>
+  </svg>
+    <button type="button" class="btn btn-outline-primary" onclick="goBack()">返回上一页</button> <br><br><br>
+    <div style="display: flex; flex-direction: column; align-items: center;">
+    <h1>{{news.news_title}}
+    </h1>
+    <h2>
+      <span class="badge text-bg-secondary">作者：{{ news.author }}</span>
+      <span class="badge text-bg-primary">发布日期：{{ news.pub_date|date:"Y-m-d" }}</span>
+    </h2>
+    <p>
+        <span class="badge text-bg-danger">文章热度：{{ news.news_popularity }}</span>
+        <span class="badge text-bg-danger">评论数：{{ news.comment_set.count }}</span>
+        {% if news.author.author_link != "" %}
+        <span class="badge text-bg-danger">作者微博：<a href="{{ news.author.author_link }}">{{ news.author.author_link }}</a></span>
+          {% if news.author.author_fans != 0 %}
+          <span class="badge text-bg-danger">作者粉丝数：{{ news.author.author_fans }}</span>
+          {% endif %}
+        {% else %}
+        <span class="badge text-bg-danger">作者无微博</span>
+        {% endif %}
+        </p>
+        <p>关键词:{% for word in news.its_keywords.all %}
+          <span class="badge text-bg-primary">{{ word.word_name }}</span>
+          {% endfor %}
+        </p>
+    <p>文章来源 <a href={{news.news_link}}>新浪新闻：{{news.news_title}}</a></p><br><br>
+</div>
+    <h2>文章正文</h2>
+    
+    <div div class="container mt-5">
+      <div style="display: flex; justify-content: center;">
+        <img src="{% static 'imgs/' %}{{ news.news_id }}_1.png" class="img-fluid" style="width: 900px;" alt="Responsive image">
+      </div><br><br><br><br>
+						{% for content in news_content %}
+						{% if "sinaimg" in content%}
+						{% else %}
+						<p>{{content}}</p>
+						{% endif%}
+						{% endfor %}
+					</div>
+
+
+    <div class="mt-5">
+      <h4>评论区</h4><br><br>
+      {% for comment in comments %}
+        <div style="display: flex; justify-content: space-between;">
+          <div>
+            <strong>{{ comment.comment_user }}</strong>: <a style="font-family: 'SimSun';">{{ comment.comment_content }}</a>
+            <br>
+            <small>评论时间: {{ comment.comment_time|date:"Y-m-d" }}</small>
+          </div>
+          <div>
+            <a href="{% url 'delete_comment' comment.id news.news_id %}" class="btn btn-danger btn-sm mt-2">删除评论</a>
+          </div>
+        </div>
+        <br>
+      {% endfor %}
+
+      <h4>提交评论</h4><br><br>
+      <form action="{% url 'create_comment' news.news_id %}" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          <label>用户名</label>
+          <input type="text" class="form-control form-control-lg" id="username" name="comment_user">
+          <label>评论内容</label>
+          <textarea class="form-control form-control-lg" rows="5" id="comment" name="comment_content"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">提交</button>
+      </form>
+    </div>
+
+  </div>
+
+      <div class="container">
+      <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <p class="col-md-4 mb-0 text-muted">Bohan's News</p>
+        <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+          <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+        </a>
+        <ul class="nav col-md-4 justify-content-end">
+          <li class="nav-item"><a href="/" class="nav-link px-2 text-muted">首页</a></li>
+          <li class="nav-item"><a href="/search/" class="nav-link px-2 text-muted">搜索</a></li>
+          <li class="nav-item"><a href="/cat/" class="nav-link px-2 text-muted">分类</a></li>
+          <li class="nav-item"><a href="/" class="nav-link px-2 text-muted disabled">列表</a></li>
+        </ul>
+      </footer>
+    </div>
+</body>
+</html>

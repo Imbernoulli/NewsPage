@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    {% load static %}
+    <meta charset="utf-8">
+    <title>新闻首页</title>
+    <link rel="stylesheet" type="text/css" href="/static/bootstrap.min.css">
+    <style>
+    .index-image {
+      width: 634px;
+      object-fit: cover;
+      height: 340px;
+    }
+    </style>
+  </head>
+  
+  <body>
+    
+  <div class="container">
+      <header class="d-flex justify-content-center py-3">
+        <ul class="nav nav-pills">
+          <li class="nav-item"><a href="/" class="nav-link active" aria-current="page">首页</a></li>
+          <li class="nav-item"><a href="/search/" class="nav-link">搜索</a></li>
+          <li class="nav-item"><a href="/cat/" class="nav-link">分类</a></li>
+          <li class="nav-item"><a href="/" class="nav-link disabled">列表</a></li>
+        </ul>
+      </header>
+    </div>
+    <section class="py-5 text-center container">
+      <div class="row py-lg-5">
+        <div class="col-lg-6 col-md-8 mx-auto">
+          <h1 class="fw-light">Bohan's News</h1>
+          <p class="lead text-muted">汇总从2022年1月1日到2023年8月30日共<strong>20000</strong>条科技新闻。</p>
+          <p class="lead text-muted">使用Few-Shot Learning 对所有文章进行关键词标注和分类。</p>
+          <p class="lead text-muted">尽可多的获取作者微博信息，并在此基础上用高斯噪声模拟文章热度。</p>
+          <p class="lead text-muted">支持四种搜索方式、四种排序方式。搜索时间普遍在0.3秒以内，</p>
+          <p>
+            <a href="/search/" class="btn btn-light">搜索</a>
+            <a href="/allnews/" class="btn btn-light">全部新闻</a>
+          </p>
+        </div>
+      </div>
+    </section>
+    <div class="container mt-5">
+      <div class="row row-cols-1 row-cols-md-2 g-4">
+        {% for news_item in list%}
+        <div class="col">
+          <div class="card">
+            <img src="{% static 'imgs/' %}{{ news_item.news_id }}_1.png" class="card-img-top index-image" alt="{{ news_item }}">
+            <div class="card-body">
+              <h5 class="card-title">{{ news_item }}</h5>
+                <h6><span class="badge text-bg-secondary">作者：{{ news_item.author }}</span>
+                <span class="badge text-bg-primary">发布日期：{{ news_item.pub_date|date:"Y-m-d" }}</span>
+                <h6>
+              <p>
+                <span class="badge text-bg-danger">评论数：{{ news_item.comment_set.count }}</span>
+                <span class="badge text-bg-danger">文章热度：{{ news_item.news_popularity }}</span>
+                {% if news_item.author.author_link != "" %}
+                <span class="badge text-bg-danger">作者微博：{{ news_item.author.author_link }}</span>
+                  {% if news_item.author.author_fans != 0 %}
+                  <span class="badge text-bg-danger">作者粉丝数：{{ news_item.author.author_fans }}</span>
+                  {% endif %}
+                {% else %}
+                <span class="badge text-bg-danger">作者无微博</span>
+                {% endif %}
+                </p>
+                <p>关键词:{% for word in news_item.its_keywords.all %}
+                  <span class="badge text-bg-primary">{{ word.word_name }}</span>
+                  {% endfor %}
+                </p>
+              <p class="card-text">{{ news_item.news_summary }}</p>
+              <a href="/search/{{news_item.news_id}}" class="btn btn-primary">了解更多</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="container mt-5">
+      <div class="d-grid gap-2 col-6 mx-auto">
+        <a  href="/" button class="btn btn-outline-dark" type="button">换一批</a></button>
+      </div>
+    </div>
+    <div class="container">
+      <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <p class="col-md-4 mb-0 text-muted">Bohan's News</p>
+        <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+          <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+        </a>
+        <ul class="nav col-md-4 justify-content-end">
+          <li class="nav-item"><a href="/" class="nav-link px-2 text-muted">首页</a></li>
+          <li class="nav-item"><a href="/search/" class="nav-link px-2 text-muted">搜索</a></li>
+          <li class="nav-item"><a href="/cat/" class="nav-link px-2 text-muted">分类</a></li>
+          <li class="nav-item"><a href="/" class="nav-link px-2 text-muted disabled">列表</a></li>
+        </ul>
+      </footer>
+    </div>
+  </div>
+  </body>
+</html>

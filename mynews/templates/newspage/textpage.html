@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+	<head>
+		{% load static %}
+		<title>{{news_title}}</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="/static/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="/static/main.css">
+	</head>
+	<body class="is-preload">
+		<div id="page-wrapper">
+
+			<!-- Header -->
+				<header id="header">
+					<h1><a href="home.html">Bohan's </a> News</h1>
+					<nav id="nav">
+						<ul>
+							<li><a href="home.html">Home</a></li>
+						</ul>
+					</nav>
+				</header>
+
+				<section id="main" class="container">
+					<header>
+						<h2>{{news_title}}</h2>
+						<p>{{news_author}}</p>
+					</header>
+					<div class="box">
+						{% for content in news_content %}
+						{% if "sinaimg" in content%}
+						<span class="image featured"><img src={{content}} alt="" /></span>
+						{% elif "<" in content %}
+
+						{% else %}
+						<p>{{content}}</p>
+						{% endif%}
+						{% endfor %}
+					</div>
+				</section>
+				<section id="main" class="container medium">
+					<header>
+						<h2>评论区</h2> 
+						{% for comment in comments %}
+						<p><strong>{{comment.user}}:</strong>{{comment.content}}</p>
+						{% endfor %}
+					</header>
+					<div class="box">
+						<form method="post" action="#">
+							<div class="row gtr-50 gtr-uniform">
+								<div class="col-12">
+									<input type="text" name="subject" id="subject" value="" placeholder="Username" />
+								</div>
+								<div class="col-12">
+									<textarea name="message" id="message" placeholder="Enter your comment" rows="6"></textarea>
+								</div>
+								<div class="col-12">
+									<ul class="actions special">
+										<li><input type="submit" value="Submit Comment" /></li>
+									</ul>
+								</div>
+							</div>
+						</form>
+					</div>
+				</section>
+			<!-- Footer -->
+				<footer id="footer">
+					<ul class="actions special">
+						<div class="container text-center">
+							<div class="row">
+								<div class="col">
+								<button type="button" class="btn btn-outline-secondary btn-lg">上一条新闻</button>
+								</div>
+								<div class="col">
+								<button type="button" class="btn btn-outline-secondary btn-lg">返回顶部</button>
+								</div>
+								<div class="col">
+								<button type="button" class="btn btn-outline-secondary btn-lg">下一条新闻</button>
+								</div>
+							</div>
+							</div>
+									</ul>
+				</footer>
+
+		</div>
+
+	</body>
+</html>
