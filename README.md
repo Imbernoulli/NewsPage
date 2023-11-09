@@ -57,13 +57,13 @@ The data analysis is documented in a separate report. The report includes the an
 ## Repository Structure
 
 - `crawler/read_list.py`: Script for fetching the list of news articles.
-- crawler/`read_page.py`: Script for fetching the content of the news articles.
-- crawler/`get_weibo_cookies.py`: Script for fetching the cookies for Sina Weibo.
-- crawler/`get_weibo_fans.py`: Script for fetching the number of followers of the authors.
+- `crawler/read_page.py`: Script for fetching the content of the news articles.
+- `crawler/get_weibo_cookies.py`: Script for fetching the cookies for Sina Weibo.
+- `crawler/get_weibo_fans.py`: Script for fetching the number of followers of the authors.
 - `crawler/fixjson.py`: Script for processing the fetched data.
-- crawler/`query_format.md`: File containing the prompts for the GPT-3.5-turbo model.
-- crawler/`sina_link.txt`: File containing the list of news articles.
-- crawler/`weibo_cookies.json`: File containing the cookies for Sina Weibo.
+- `crawler/query_format.md`: File containing the prompts for the GPT-3.5-turbo model.
+- `crawler/sina_link.txt`: File containing the list of news articles.
+- `crawler/weibo_cookies.json`: File containing the cookies for Sina Weibo.
 - `mynews/newspage/views.py`: File containing the code for the website features.
 - `mynews/newspage/models.py`: File containing the data models for the website.
 - `mynews/newspage/templates/newspage`: Directory containing the HTML templates for the website.
